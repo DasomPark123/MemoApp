@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="top_menu_background">
+        <item name="elevation">20dp</item>
+    </style>
+</resources>
