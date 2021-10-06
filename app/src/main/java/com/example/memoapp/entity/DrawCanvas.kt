@@ -20,6 +20,7 @@ class DrawCanvas @JvmOverloads constructor(
     enum class Tool {
         PEN, ERASER
     }
+    var currentTool : Tool = Tool.PEN
 
     private val penSize = 3
     private val eraserSize = 30
@@ -29,6 +30,8 @@ class DrawCanvas @JvmOverloads constructor(
     private var drownImage: Bitmap? = null
     private var color: Int = Color.BLACK
     private var size: Int = penSize
+
+    private var drawCommandListForRedo = ArrayList<Pen>()
 
     // 현재 그린 그림을 bitmap으로 반환
     fun currentCanvas(): Bitmap {
@@ -42,14 +45,54 @@ class DrawCanvas @JvmOverloads constructor(
     fun changeTool(tool: Tool) {
         when (tool) {
             Tool.PEN -> {
+                currentTool = Tool.PEN
                 this.color = Color.BLACK
                 size = penSize
             }
             Tool.ERASER -> {
+                currentTool = Tool.ERASER
                 this.color = Color.WHITE
                 size = eraserSize
             }
         }
+    }
+
+    // 현재 그림을 undo
+    fun undo() {
+        //Log.d(TAG,"undo() size : " + drawCommandList.size)
+        if(drawCommandList.size <= 0)
+            return
+
+        for(i in drawCommandList.size - 1 downTo 0) {
+            val pen : Pen = drawCommandList[i]
+                drawCommandList.removeAt(i)
+
+            if(!pen.move())
+                break
+        }
+        invalidate()
+    }
+
+    // undo 했던 그림을 redo
+    fun redo() {
+        var isFirstFalse = true
+        Log.d(TAG,"redo() size : " + drawCommandList.size)
+        for(i in drawCommandList.size until drawCommandListForRedo.size) {
+            Log.d(TAG, "redo() index : $i")
+            if(drawCommandListForRedo[i].move()) {
+                drawCommandList.add(drawCommandListForRedo[i])
+            }
+            else {
+                if(isFirstFalse) {
+                    drawCommandList.add(drawCommandListForRedo[i])
+                    isFirstFalse = false;
+                }
+                else {
+                    break
+                }
+            }
+        }
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -62,7 +105,7 @@ class DrawCanvas @JvmOverloads constructor(
         }
 
         for (i in 0 until drawCommandList.size) {
-            val pen: Pen = drawCommandList.get(i)
+            val pen : Pen = drawCommandList.get(i)
             paint.color = pen.color
             paint.strokeWidth = pen.size.toFloat()
 
@@ -75,11 +118,22 @@ class DrawCanvas @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(TAG,"onTouchEvent")
+        Log.d(TAG,"onTouchEvent : " + event!!.action)
         val action : Int = event!!.action
-        val state : Pen.State = if(action == MotionEvent.ACTION_DOWN) { Pen.State.START} else { Pen.State.MOVE}
-        drawCommandList.add(Pen(event.x, event.y, state, color, size))
-        invalidate()
+        var state : Pen.State = Pen.State.MOVE
+        if(action == MotionEvent.ACTION_DOWN)
+            state = Pen.State.START
+        else if(action == MotionEvent.ACTION_UP)
+            state = Pen.State.END
+
+        if(state == Pen.State.START || state == Pen.State.MOVE) {
+            drawCommandList.add(Pen(event.x, event.y, state, color, size))
+            invalidate()
+        }
+        else if(state == Pen.State.END) {
+            drawCommandListForRedo.clear()
+            drawCommandListForRedo.addAll(drawCommandList)
+        }
         return true
     }
 }
