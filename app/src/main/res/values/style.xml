@@ -3,4 +3,10 @@
     <style name="top_menu_background">
         <item name="elevation">20dp</item>
     </style>
+
+    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.Dialog.Bridge">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimAmount">0</item>
+    </style>
+
 </resources>

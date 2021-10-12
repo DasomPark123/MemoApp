@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MemoApp</string>
+
+    <!-- Menu dialog -->
+    <string name="tool">Tool</string>
+    <string name="color">Color</string>
+    <string name="size">Size</string>
+    <string name="reset">reset</string>
+    <string name="apply">apply</string>
 </resources>

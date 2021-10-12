@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MemoApp">
         <activity
+            android:name=".dialog.ThemeDialog"
+            android:theme="@style/CustomDialogTheme"
+            android:exported="true" />
+        <activity
             android:name=".DrawActivity"
             android:exported="true">
             <intent-filter>
