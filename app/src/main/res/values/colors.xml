@@ -14,9 +14,13 @@
     <color name="navy">#3F51B5</color>
     <color name="purple">#673AB7</color>
     <color name="gray">#666666</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
+
+    <color name="black_trans_80">#CC2E2D2D</color>
+    <color name="f4f3f3_tans_70">#B3F4F3F3</color>
+    <color name="dfdddd_tans_70">#B3EAE9E9</color>
 
     <color name="col_D1CDCD">#D1CDCD</color>
 </resources>

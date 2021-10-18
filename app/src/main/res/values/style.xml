@@ -7,6 +7,16 @@
     <style name="CustomDialogTheme" parent="Theme.MaterialComponents.Dialog.Bridge">
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimAmount">0</item>
+        <item name="background">@drawable/bg_trans_white</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
 </resources>
