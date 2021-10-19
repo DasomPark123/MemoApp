@@ -2,6 +2,7 @@ package com.example.memoapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.example.memoapp.databinding.ActivityDrawBinding
@@ -9,6 +10,8 @@ import com.example.memoapp.dialog.ThemeDialog
 import com.example.memoapp.entity.DrawCanvas
 
 class DrawActivity : AppCompatActivity() {
+    private val TAG : String = javaClass.simpleName
+
     private lateinit var binding: ActivityDrawBinding
 
     private lateinit var canvas: DrawCanvas
@@ -50,6 +53,7 @@ class DrawActivity : AppCompatActivity() {
                 }
             }
             R.id.iv_color_and_type -> {
+                Log.d(TAG,"iv_color_and_Type_clicked")
                 val dialog = ThemeDialog(this,
                     onToolItemSelected = { itemIndex : Int ->
                         //TODO : 선택된 툴로 변경
