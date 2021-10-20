@@ -43,6 +43,16 @@ class ThemeDialog(
             ivHighlighter.setOnClickListener(onToolClickListener)
             ivSpray.setOnClickListener(onToolClickListener)
             ivEraser.setOnClickListener(onToolClickListener)
+            ivRed.setOnClickListener(onColorClickListener)
+            ivOrange.setOnClickListener(onColorClickListener)
+            ivYellow.setOnClickListener(onColorClickListener)
+            ivGreen.setOnClickListener(onColorClickListener)
+            ivBlue.setOnClickListener(onColorClickListener)
+            ivNavy.setOnClickListener(onColorClickListener)
+            ivPurple.setOnClickListener(onColorClickListener)
+            ivGray.setOnClickListener(onColorClickListener)
+            ivBlack.setOnClickListener(onColorClickListener)
+            ivWhite.setOnClickListener(onColorClickListener)
         }
     }
 
@@ -61,7 +71,6 @@ class ThemeDialog(
             R.id.iv_pencil -> {
                 binding.ivPencil.background = ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
             }
-
             R.id.iv_brush -> {
                 binding.ivBrush.background = ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
             }
@@ -73,6 +82,54 @@ class ThemeDialog(
             }
             R.id.iv_eraser -> {
                 binding.ivEraser.background = ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+            }
+        }
+    }
+
+    private val onColorClickListener = View.OnClickListener {
+
+        with(binding) {
+            ivRed.setImageResource(R.drawable.round_red_unclicked)
+            ivOrange.setImageResource(R.drawable.round_orange_unclicked)
+            ivYellow.setImageResource(R.drawable.round_yellow_unclicked)
+            ivGreen.setImageResource(R.drawable.round_green_unclicked)
+            ivBlue.setImageResource(R.drawable.round_blue_unclicked)
+            ivNavy.setImageResource(R.drawable.round_navy_unclicked)
+            ivPurple.setImageResource(R.drawable.round_purple_unclicked)
+            ivGray.setImageResource(R.drawable.round_gray_unclicked)
+            ivBlack.setImageResource(R.drawable.round_black_unclicked)
+            ivWhite.setImageResource(R.drawable.round_whilte_unclicked)
+        }
+        when(it.id) {
+            R.id.iv_red -> {
+                binding.ivRed.setImageResource(R.drawable.round_red_clicked)
+            }
+            R.id.iv_orange -> {
+                binding.ivOrange.setImageResource(R.drawable.round_orange_clicked)
+            }
+            R.id.iv_yellow -> {
+                binding.ivYellow.setImageResource(R.drawable.round_yellow_clicked)
+            }
+            R.id.iv_green -> {
+                binding.ivGreen.setImageResource(R.drawable.round_green_clicked)
+            }
+            R.id.iv_blue -> {
+                binding.ivBlue.setImageResource(R.drawable.round_blue_clicked)
+            }
+            R.id.iv_navy -> {
+                binding.ivNavy.setImageResource(R.drawable.round_navy_clicked)
+            }
+            R.id.iv_purple -> {
+                binding.ivPurple.setImageResource(R.drawable.round_purple_clicked)
+            }
+            R.id.iv_gray -> {
+                binding.ivGray.setImageResource(R.drawable.round_gray_clicked)
+            }
+            R.id.iv_black -> {
+                binding.ivBlack.setImageResource(R.drawable.round_black_clicked)
+            }
+            R.id.iv_white -> {
+                binding.ivWhite.setImageResource(R.drawable.round_white_clicked)
             }
         }
     }
