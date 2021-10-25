@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,17 +16,21 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.memoapp.R
 import com.example.memoapp.databinding.DialogThemeBinding
+import com.example.memoapp.entity.DrawCanvas
 
 class ThemeDialog(
     context: Context,
     onToolItemSelected: (Int) -> Unit,
-    onColorItemSelected: (Int) -> Unit,
+    onColorItemSelected: (DrawCanvas.Colors) -> Unit,
     onSizeItemSelected: (Int) -> Unit
 ) : Dialog(context) {
 
     private val TAG : String = javaClass.simpleName
 
     private lateinit var binding: DialogThemeBinding
+
+    private lateinit var background : Drawable
+    private lateinit var gradientDrawable: GradientDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,16 @@ class ThemeDialog(
             ivBlack.setOnClickListener(onColorClickListener)
             ivWhite.setOnClickListener(onColorClickListener)
         }
+
+        background = binding.ivSizePreview.background
+       if(background is GradientDrawable) {
+            gradientDrawable = background as GradientDrawable
+        }
+    }
+
+    private fun changeStrokeColorOfSizePreview(color : Int) {
+        if(background is GradientDrawable)
+            gradientDrawable.setStroke(5, color)
     }
 
     private val onToolClickListener : View.OnClickListener = View.OnClickListener() {
@@ -103,33 +119,53 @@ class ThemeDialog(
         when(it.id) {
             R.id.iv_red -> {
                 binding.ivRed.setImageResource(R.drawable.round_red_clicked)
+                onColorItemSelected(DrawCanvas.Colors.RED)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.red))
             }
             R.id.iv_orange -> {
                 binding.ivOrange.setImageResource(R.drawable.round_orange_clicked)
+                onColorItemSelected(DrawCanvas.Colors.ORANGE)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.orange))
             }
             R.id.iv_yellow -> {
                 binding.ivYellow.setImageResource(R.drawable.round_yellow_clicked)
+                onColorItemSelected(DrawCanvas.Colors.YELLOW)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.yellow))
             }
             R.id.iv_green -> {
                 binding.ivGreen.setImageResource(R.drawable.round_green_clicked)
+                onColorItemSelected(DrawCanvas.Colors.GREEN)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.green))
             }
             R.id.iv_blue -> {
                 binding.ivBlue.setImageResource(R.drawable.round_blue_clicked)
+                onColorItemSelected(DrawCanvas.Colors.BLUE)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.blue))
             }
             R.id.iv_navy -> {
                 binding.ivNavy.setImageResource(R.drawable.round_navy_clicked)
+                onColorItemSelected(DrawCanvas.Colors.NAVY)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.navy))
             }
             R.id.iv_purple -> {
                 binding.ivPurple.setImageResource(R.drawable.round_purple_clicked)
+                onColorItemSelected(DrawCanvas.Colors.PURPLE)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.purple))
             }
             R.id.iv_gray -> {
                 binding.ivGray.setImageResource(R.drawable.round_gray_clicked)
+                onColorItemSelected(DrawCanvas.Colors.GRAY)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.gray))
             }
             R.id.iv_black -> {
                 binding.ivBlack.setImageResource(R.drawable.round_black_clicked)
+                onColorItemSelected(DrawCanvas.Colors.BLACK)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
             }
             R.id.iv_white -> {
                 binding.ivWhite.setImageResource(R.drawable.round_white_clicked)
+                onColorItemSelected(DrawCanvas.Colors.WHITE)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.white))
             }
         }
     }

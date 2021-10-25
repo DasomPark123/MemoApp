@@ -10,6 +10,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.example.memoapp.R
 
 //그림이 그려질 Canvas
 class DrawCanvas @JvmOverloads constructor(
@@ -17,10 +19,15 @@ class DrawCanvas @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     private val TAG = javaClass.simpleName
 
-    enum class Tool {
+    enum class Tools {
         PEN, ERASER
     }
-    var currentTool : Tool = Tool.PEN
+
+    enum class Colors {
+        RED, ORANGE, YELLOW, GREEN, BLUE, NAVY, PURPLE, GRAY, BLACK, WHITE
+    }
+
+    var currentTool : Tools = Tools.PEN
 
     private val penSize = 3
     private val eraserSize = 30
@@ -28,7 +35,7 @@ class DrawCanvas @JvmOverloads constructor(
     private var drawCommandList = ArrayList<Pen>()
     private var paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var drownImage: Bitmap? = null
-    private var color: Int = Color.BLACK
+    private var currentColor: Int = Color.BLACK
     private var size: Int = penSize
 
     private var drawCommandListForRedo = ArrayList<Pen>()
@@ -42,20 +49,62 @@ class DrawCanvas @JvmOverloads constructor(
     }
 
     // Tool 타입을 변경
-    fun changeTool(tool: Tool) {
-        when (tool) {
-            Tool.PEN -> {
-                currentTool = Tool.PEN
-                this.color = Color.BLACK
+    fun changeTool(tools: Tools) {
+        when (tools) {
+            Tools.PEN -> {
+                currentTool = Tools.PEN
+                //this.color = Color.BLACK
                 size = penSize
             }
-            Tool.ERASER -> {
-                currentTool = Tool.ERASER
-                this.color = Color.WHITE
+            Tools.ERASER -> {
+                currentTool = Tools.ERASER
+                currentColor = Color.WHITE
                 size = eraserSize
             }
         }
     }
+
+    // Color를 변경
+    fun changeColor(color : Colors) {
+        when (color) {
+            Colors.RED -> {
+                currentColor = ContextCompat.getColor(context, R.color.red)
+            }
+            Colors.ORANGE -> {
+                currentColor = ContextCompat.getColor(context, R.color.orange)
+            }
+            Colors.YELLOW -> {
+                currentColor = ContextCompat.getColor(context, R.color.yellow)
+            }
+            Colors.GREEN -> {
+                currentColor = ContextCompat.getColor(context, R.color.green)
+            }
+            Colors.BLUE -> {
+                currentColor = ContextCompat.getColor(context, R.color.blue)
+            }
+            Colors.NAVY -> {
+                currentColor = ContextCompat.getColor(context, R.color.navy)
+            }
+            Colors.PURPLE -> {
+                currentColor = ContextCompat.getColor(context, R.color.purple)
+            }
+            Colors.GRAY -> {
+                currentColor = ContextCompat.getColor(context, R.color.gray)
+            }
+            Colors.BLACK -> {
+                currentColor = ContextCompat.getColor(context, R.color.black)
+            }
+            Colors.WHITE -> {
+                currentColor = ContextCompat.getColor(context, R.color.white)
+            }
+        }
+    }
+
+    // Size를 변경
+    fun changeSize(size : Int) {
+        this.size = size
+    }
+
 
     // 현재 그림을 undo
     fun undo() {
@@ -127,7 +176,7 @@ class DrawCanvas @JvmOverloads constructor(
             state = Pen.State.END
 
         if(state == Pen.State.START || state == Pen.State.MOVE) {
-            drawCommandList.add(Pen(event.x, event.y, state, color, size))
+            drawCommandList.add(Pen(event.x, event.y, state, currentColor, size))
             invalidate()
         }
         else if(state == Pen.State.END) {

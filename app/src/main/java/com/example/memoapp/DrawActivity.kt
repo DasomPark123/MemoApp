@@ -44,12 +44,12 @@ class DrawActivity : AppCompatActivity() {
                 canvas.redo()
             }
             R.id.iv_tool -> {
-                if (canvas.currentTool == DrawCanvas.Tool.PEN) {
+                if (canvas.currentTool == DrawCanvas.Tools.PEN) {
                     binding.ivTool.setImageResource(R.drawable.round_pencil_24)
-                    canvas.changeTool(DrawCanvas.Tool.ERASER)
-                } else if (canvas.currentTool == DrawCanvas.Tool.ERASER) {
+                    canvas.changeTool(DrawCanvas.Tools.ERASER)
+                } else if (canvas.currentTool == DrawCanvas.Tools.ERASER) {
                     binding.ivTool.setImageResource(R.drawable.ic_eraser_24)
-                    canvas.changeTool(DrawCanvas.Tool.PEN)
+                    canvas.changeTool(DrawCanvas.Tools.PEN)
                 }
             }
             R.id.iv_color_and_type -> {
@@ -58,8 +58,8 @@ class DrawActivity : AppCompatActivity() {
                     onToolItemSelected = { itemIndex : Int ->
                         //TODO : 선택된 툴로 변경
                     },
-                    onColorItemSelected = { itemIndex : Int ->
-                        //TODO : 선택된 컬러로 변경
+                    onColorItemSelected = { selectedColor : DrawCanvas.Colors ->
+                        canvas.changeColor(selectedColor)
                     },
                     onSizeItemSelected = { selectedValue : Int ->
                         //TODO : 선택된 사이즈로 변경
