@@ -29,14 +29,14 @@ class DrawCanvas @JvmOverloads constructor(
 
     var currentTool : Tools = Tools.PEN
 
-    private val penSize = 3
+    private val defSize = 3
     private val eraserSize = 30
 
     private var drawCommandList = ArrayList<Pen>()
     private var paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var drownImage: Bitmap? = null
     private var currentColor: Int = Color.BLACK
-    private var size: Int = penSize
+    private var currentSize: Int = defSize
 
     private var drawCommandListForRedo = ArrayList<Pen>()
 
@@ -54,18 +54,18 @@ class DrawCanvas @JvmOverloads constructor(
             Tools.PEN -> {
                 currentTool = Tools.PEN
                 //this.color = Color.BLACK
-                size = penSize
+                currentSize = defSize
             }
             Tools.ERASER -> {
                 currentTool = Tools.ERASER
                 currentColor = Color.WHITE
-                size = eraserSize
+                currentSize = eraserSize
             }
         }
     }
 
     // Color를 변경
-    fun changeColor(color : Colors) {
+    fun setColor(color : Colors) {
         when (color) {
             Colors.RED -> {
                 currentColor = ContextCompat.getColor(context, R.color.red)
@@ -100,11 +100,50 @@ class DrawCanvas @JvmOverloads constructor(
         }
     }
 
-    // Size를 변경
-    fun changeSize(size : Int) {
-        this.size = size
+    fun getColor() : Colors {
+        when(currentColor) {
+            ContextCompat.getColor(context, R.color.red) -> {
+                return Colors.RED
+            }
+            ContextCompat.getColor(context, R.color.orange) -> {
+                return Colors.ORANGE
+            }
+            ContextCompat.getColor(context, R.color.yellow) -> {
+                return Colors.YELLOW
+            }
+            ContextCompat.getColor(context, R.color.green) -> {
+                return Colors.GREEN
+            }
+            ContextCompat.getColor(context, R.color.blue) -> {
+                return Colors.BLUE
+            }
+            ContextCompat.getColor(context, R.color.navy) -> {
+                return Colors.NAVY
+            }
+            ContextCompat.getColor(context, R.color.purple) -> {
+                return Colors.PURPLE
+            }
+            ContextCompat.getColor(context, R.color.gray) -> {
+                return Colors.GRAY
+            }
+            ContextCompat.getColor(context, R.color.black) -> {
+                return Colors.BLACK
+            }
+            ContextCompat.getColor(context, R.color.white) -> {
+                return Colors.WHITE
+            }
+        }
+        return Colors.BLACK
     }
 
+    // Size를 변경
+    fun setSize(size : Int) {
+        currentSize = size
+    }
+
+    fun getSize() : Int {
+        return currentSize
+    }
 
     // 현재 그림을 undo
     fun undo() {
@@ -176,7 +215,7 @@ class DrawCanvas @JvmOverloads constructor(
             state = Pen.State.END
 
         if(state == Pen.State.START || state == Pen.State.MOVE) {
-            drawCommandList.add(Pen(event.x, event.y, state, currentColor, size))
+            drawCommandList.add(Pen(event.x, event.y, state, currentColor, currentSize))
             invalidate()
         }
         else if(state == Pen.State.END) {
