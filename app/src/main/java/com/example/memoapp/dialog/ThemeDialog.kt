@@ -14,6 +14,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.memoapp.R
@@ -32,13 +33,16 @@ class ThemeDialog(
 
     private lateinit var binding: DialogThemeBinding
 
-    private lateinit var background: Drawable
+    private lateinit var sizePreview: Drawable
     private lateinit var gradientDrawable: GradientDrawable
 
     private val canvas: DrawCanvas = canvas
     private val toolCallback: (Int) -> Unit = onToolItemSelected
     private val colorCallback: (DrawCanvas.Colors) -> Unit = onColorItemSelected
     private val sizeCallback: (Int) -> Unit = onSizeItemSelected
+
+    private val MAX_SIZE = 36
+    private val MIN_SIZE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +80,7 @@ class ThemeDialog(
                 override fun onProgressChanged(p0: SeekBar?, level: Int, p2: Boolean) {
                     Log.d(TAG, "onProgressChanged : $level")
                     sizeCallback(level)
+                    changeSizeOfPreview(level.toFloat())
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -89,11 +94,15 @@ class ThemeDialog(
             })
         }
 
-        // Initialize size preview
-        background = binding.ivSizePreview.background
-        if (background is GradientDrawable) {
-            gradientDrawable = background as GradientDrawable
-        }
+//        // Initialize size preview
+//        background = binding.ivSizePreview.background
+//        if (background is GradientDrawable) {
+//            gradientDrawable = background as GradientDrawable
+//        }
+
+        sizePreview = AppCompatResources.getDrawable(context, R.drawable.round_black_line)!!
+        if( sizePreview is GradientDrawable)
+            gradientDrawable = sizePreview as GradientDrawable
 
         initView()
     }
@@ -108,8 +117,21 @@ class ThemeDialog(
     }
 
     private fun changeStrokeColorOfSizePreview(color: Int) {
-        if (background is GradientDrawable)
+        if (sizePreview is GradientDrawable)
             gradientDrawable.setStroke(5, color)
+        binding.ivSizePreview.setImageResource(R.drawable.round_black_line)
+    }
+
+    private fun changeSizeOfPreview(level : Float) {
+        var size = MAX_SIZE * (level / 100) * 4
+        if(size < 10)
+            size = 10.0f
+        Log.d(TAG,"size : ${size.toInt()}")
+       if (sizePreview is GradientDrawable) {
+           Log.d(TAG,"gradientDrawable")
+           gradientDrawable.setSize(size.toInt(), size.toInt())
+           binding.ivSizePreview.setImageResource(R.drawable.round_black_line)
+       }
     }
 
     private fun changeToColorSelectedImage(colors: DrawCanvas.Colors) {
@@ -180,7 +202,6 @@ class ThemeDialog(
             }
         }
     }
-
 
     private val onToolClickListener = View.OnClickListener {
         Log.d(TAG, "clicked " + it.id)
