@@ -14,7 +14,7 @@ class Pen( color : Int, size : Int) {
     var color : Int = color
     var size : Int = size
 
-    fun move() : Boolean {
-        return moveState == State.MOVE
-    }
+//    fun move() : Boolean {
+//        return moveState == State.MOVE
+//    }
 }
