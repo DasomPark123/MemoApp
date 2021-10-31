@@ -15,7 +15,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_shadow_white"
+            android:background="@drawable/bg_trans_white"
+            android:theme="@style/Theme.Transparent"
             android:orientation="horizontal"
             android:padding="12dp">
 

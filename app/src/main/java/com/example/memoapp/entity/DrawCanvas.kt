@@ -2,10 +2,7 @@ package com.example.memoapp.entity
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -32,11 +29,13 @@ class DrawCanvas @JvmOverloads constructor(
     private val defSize = 3
     private val eraserSize = 30
 
-    private var drawCommandList = ArrayList<Pen>()
-    private var paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private var drownImage: Bitmap? = null
-    private var currentColor: Int = Color.BLACK
-    private var currentSize: Int = defSize
+    //private val canvas : Canvas = Canvas()
+    private val drawCommandList = ArrayList<Pen>()
+    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private lateinit var pen : Pen
+    private var drownImage : Bitmap? = null
+    private var currentColor : Int = Color.BLACK
+    private var currentSize : Int = defSize
 
     private var drawCommandListForRedo = ArrayList<Pen>()
 
@@ -53,7 +52,6 @@ class DrawCanvas @JvmOverloads constructor(
         when (tools) {
             Tools.PEN -> {
                 currentTool = Tools.PEN
-                //this.color = Color.BLACK
                 currentSize = defSize
             }
             Tools.ERASER -> {
@@ -185,43 +183,41 @@ class DrawCanvas @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawColor(Color.WHITE)
-
-        // 그려진 이미지가 없으면 0,0 부터 그림
-        if (drownImage != null) {
-            canvas?.drawBitmap(drownImage!!, 0.0f, 0.0f, null)
-        }
-
-        for (i in 0 until drawCommandList.size) {
-            val pen : Pen = drawCommandList.get(i)
+        Log.d(TAG,"onDraw()")
+        for(i in 0 until drawCommandList.size) {
+            val pen : Pen = drawCommandList[i]
+            paint.style = Paint.Style.STROKE
             paint.color = pen.color
             paint.strokeWidth = pen.size.toFloat()
-
-            if(pen.move()) {
-                val prevPen : Pen = drawCommandList.get(i-1)
-                canvas?.drawLine(prevPen.x, prevPen.y, pen.x, pen.y, paint)
-            }
+            canvas?.drawPath(pen.path, paint)
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         Log.d(TAG,"onTouchEvent : " + event!!.action)
-        val action : Int = event!!.action
-        var state : Pen.State = Pen.State.MOVE
-        if(action == MotionEvent.ACTION_DOWN)
-            state = Pen.State.START
-        else if(action == MotionEvent.ACTION_UP)
-            state = Pen.State.END
+        val x = event.x
+        val y = event.y
 
-        if(state == Pen.State.START || state == Pen.State.MOVE) {
-            drawCommandList.add(Pen(event.x, event.y, state, currentColor, currentSize))
-            invalidate()
+        val action : Int = event.action
+        when(action) {
+            MotionEvent.ACTION_DOWN -> {
+                pen = Pen(currentColor, currentSize)
+                drawCommandList.add(pen)
+                pen.path.moveTo(x,y)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                pen.path.lineTo(x,y)
+            }
+            MotionEvent.ACTION_UP -> {
+               // canvas.drawPath(pen.path, paint)
+                // redo 를 위해 저장
+                drawCommandListForRedo.clear()
+                drawCommandListForRedo.addAll(drawCommandList)
+            }
         }
-        else if(state == Pen.State.END) {
-            drawCommandListForRedo.clear()
-            drawCommandListForRedo.addAll(drawCommandList)
-        }
+
+        invalidate()
         return true
     }
 }
