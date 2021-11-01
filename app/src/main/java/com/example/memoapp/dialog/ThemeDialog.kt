@@ -110,7 +110,12 @@ class ThemeDialog(
     fun initView() {
 
         // Initialize color
-        changeToColorSelectedImage(canvas.getColor())
+        if(canvas.currentTool == DrawCanvas.Tools.ERASER) {
+            changeVisibilityForColor(false)
+        } else {
+            changeVisibilityForColor(true)
+            changeToColorSelectedImage(canvas.getColor())
+        }
 
         // Initialize size seekbar
         binding.seekbarSize.progress = canvas.getSize()
@@ -132,6 +137,13 @@ class ThemeDialog(
            gradientDrawable.setSize(size.toInt(), size.toInt())
            binding.ivSizePreview.setImageResource(R.drawable.round_black_line)
        }
+    }
+
+    private fun changeVisibilityForColor(isEnable : Boolean) {
+        with(binding) {
+            tvColor.visibility = if (isEnable) View.VISIBLE else View.GONE
+            linearColor.visibility =if (isEnable) View.VISIBLE else View.GONE
+        }
     }
 
     private fun changeToColorSelectedImage(colors: DrawCanvas.Colors) {

@@ -10,11 +10,6 @@ class Pen( color : Int, size : Int) {
 //    val x : Float = x
 //    val y : Float = y
     val path : Path = Path()
-//    var moveState : State = moveState
     var color : Int = color
     var size : Int = size
-
-//    fun move() : Boolean {
-//        return moveState == State.MOVE
-//    }
 }

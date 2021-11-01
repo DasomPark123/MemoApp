@@ -24,18 +24,17 @@ class DrawCanvas @JvmOverloads constructor(
         RED, ORANGE, YELLOW, GREEN, BLUE, NAVY, PURPLE, GRAY, BLACK, WHITE
     }
 
-    var currentTool : Tools = Tools.PEN
-
     private val defSize = 3
     private val eraserSize = 30
 
     //private val canvas : Canvas = Canvas()
     private val drawCommandList = ArrayList<Pen>()
-    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private lateinit var pen : Pen
-    private var drownImage : Bitmap? = null
-    private var currentColor : Int = Color.BLACK
-    private var currentSize : Int = defSize
+    private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private lateinit var pen: Pen
+    private var drownImage: Bitmap? = null
+    var currentTool: Tools = Tools.PEN
+    var currentColor: Int = Color.BLACK
+    var currentSize: Int = defSize
 
     private var drawCommandListForRedo = ArrayList<Pen>()
 
@@ -63,7 +62,7 @@ class DrawCanvas @JvmOverloads constructor(
     }
 
     // Color를 변경
-    fun setColor(color : Colors) {
+    fun setColor(color: Colors) {
         when (color) {
             Colors.RED -> {
                 currentColor = ContextCompat.getColor(context, R.color.red)
@@ -98,8 +97,8 @@ class DrawCanvas @JvmOverloads constructor(
         }
     }
 
-    fun getColor() : Colors {
-        when(currentColor) {
+    fun getColor(): Colors {
+        when (currentColor) {
             ContextCompat.getColor(context, R.color.red) -> {
                 return Colors.RED
             }
@@ -135,47 +134,35 @@ class DrawCanvas @JvmOverloads constructor(
     }
 
     // Size를 변경
-    fun setSize(size : Int) {
+    fun setSize(size: Int) {
         currentSize = size
     }
 
-    fun getSize() : Int {
+    fun getSize(): Int {
         return currentSize
     }
 
     // 현재 그림을 undo
     fun undo() {
         //Log.d(TAG,"undo() size : " + drawCommandList.size)
-        if(drawCommandList.size <= 0)
+        if (drawCommandList.size <= 0)
             return
 
-        for(i in drawCommandList.size - 1 downTo 0) {
-            val pen : Pen = drawCommandList[i]
-                drawCommandList.removeAt(i)
-
-            if(!pen.move())
-                break
-        }
+        drawCommandList.removeAt(drawCommandList.size -1)
         invalidate()
     }
 
     // undo 했던 그림을 redo
     fun redo() {
         var isFirstFalse = true
-        Log.d(TAG,"redo() size : " + drawCommandList.size)
-        for(i in drawCommandList.size until drawCommandListForRedo.size) {
+        Log.d(TAG, "redo() size : " + drawCommandList.size)
+        for (i in drawCommandList.size until drawCommandListForRedo.size) {
             Log.d(TAG, "redo() index : $i")
-            if(drawCommandListForRedo[i].move()) {
+            if (isFirstFalse) {
                 drawCommandList.add(drawCommandListForRedo[i])
-            }
-            else {
-                if(isFirstFalse) {
-                    drawCommandList.add(drawCommandListForRedo[i])
-                    isFirstFalse = false;
-                }
-                else {
-                    break
-                }
+                isFirstFalse = false
+            } else {
+                break
             }
         }
         invalidate()
@@ -183,34 +170,37 @@ class DrawCanvas @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        Log.d(TAG,"onDraw()")
-        for(i in 0 until drawCommandList.size) {
-            val pen : Pen = drawCommandList[i]
+        Log.d(TAG, "onDraw()")
+        for (i in 0 until drawCommandList.size) {
+            val pen: Pen = drawCommandList[i]
             paint.style = Paint.Style.STROKE
             paint.color = pen.color
+            paint.strokeCap = Paint.Cap.ROUND
             paint.strokeWidth = pen.size.toFloat()
+//            val cornerPathEffect = CornerPathEffect(3.0f)
+//            paint.pathEffect = cornerPathEffect
             canvas?.drawPath(pen.path, paint)
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(TAG,"onTouchEvent : " + event!!.action)
+        Log.d(TAG, "onTouchEvent : " + event!!.action)
         val x = event.x
         val y = event.y
 
-        val action : Int = event.action
-        when(action) {
+        val action: Int = event.action
+        when (action) {
             MotionEvent.ACTION_DOWN -> {
                 pen = Pen(currentColor, currentSize)
                 drawCommandList.add(pen)
-                pen.path.moveTo(x,y)
+                pen.path.moveTo(x, y)
             }
             MotionEvent.ACTION_MOVE -> {
-                pen.path.lineTo(x,y)
+                pen.path.lineTo(x, y)
             }
             MotionEvent.ACTION_UP -> {
-               // canvas.drawPath(pen.path, paint)
+                // canvas.drawPath(pen.path, paint)
                 // redo 를 위해 저장
                 drawCommandListForRedo.clear()
                 drawCommandListForRedo.addAll(drawCommandList)
