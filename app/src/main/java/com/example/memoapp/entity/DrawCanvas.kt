@@ -17,26 +17,27 @@ class DrawCanvas @JvmOverloads constructor(
     private val TAG = javaClass.simpleName
 
     enum class Tools {
-        PEN, ERASER
+        PEN, BRUSH, HIGHLIGHTER, SPRAY, ERASER
     }
 
     enum class Colors {
         RED, ORANGE, YELLOW, GREEN, BLUE, NAVY, PURPLE, GRAY, BLACK, WHITE
     }
 
-    private val defSize = 3
-    private val eraserSize = 30
+    private val DEF_SIZE_PEN = 3
+    private val DEF_SIZE_ERASER = 30
 
     //private val canvas : Canvas = Canvas()
-    private val drawCommandList = ArrayList<Pen>()
+    private val drawCommandList = ArrayList<Tool>()
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private lateinit var pen: Pen
+    private lateinit var tool: Tool
     private var drownImage: Bitmap? = null
     var currentTool: Tools = Tools.PEN
     var currentColor: Int = Color.BLACK
-    var currentSize: Int = defSize
+    var currentSize: Int = DEF_SIZE_PEN
+    var currentEraserSize : Int = DEF_SIZE_ERASER
 
-    private var drawCommandListForRedo = ArrayList<Pen>()
+    private var drawCommandListForRedo = ArrayList<Tool>()
 
     // 현재 그린 그림을 bitmap으로 반환
     fun currentCanvas(): Bitmap {
@@ -51,14 +52,21 @@ class DrawCanvas @JvmOverloads constructor(
         when (tools) {
             Tools.PEN -> {
                 currentTool = Tools.PEN
-                currentSize = defSize
+                currentSize = DEF_SIZE_PEN
             }
             Tools.ERASER -> {
                 currentTool = Tools.ERASER
-                currentColor = Color.WHITE
-                currentSize = eraserSize
+                currentSize = DEF_SIZE_ERASER
             }
         }
+    }
+
+    fun setTool(tool: Tools) {
+        currentTool = tool
+
+//        // 지우개를 선택한 경우 배경색과 동일하게 색상 변경해 줌
+//        if(currentTool == Tools.ERASER)
+//            currentColor = ContextCompat.getColor(context, R.color.white)
     }
 
     // Color를 변경
@@ -135,7 +143,10 @@ class DrawCanvas @JvmOverloads constructor(
 
     // Size를 변경
     fun setSize(size: Int) {
-        currentSize = size
+        if(currentTool == Tools.ERASER)
+            currentEraserSize = size
+        else
+            currentSize = size
     }
 
     fun getSize(): Int {
@@ -148,7 +159,7 @@ class DrawCanvas @JvmOverloads constructor(
         if (drawCommandList.size <= 0)
             return
 
-        drawCommandList.removeAt(drawCommandList.size -1)
+        drawCommandList.removeAt(drawCommandList.size - 1)
         invalidate()
     }
 
@@ -172,14 +183,14 @@ class DrawCanvas @JvmOverloads constructor(
         super.onDraw(canvas)
         Log.d(TAG, "onDraw()")
         for (i in 0 until drawCommandList.size) {
-            val pen: Pen = drawCommandList[i]
+            val tool: Tool = drawCommandList[i]
             paint.style = Paint.Style.STROKE
-            paint.color = pen.color
+            paint.color = tool.color
             paint.strokeCap = Paint.Cap.ROUND
-            paint.strokeWidth = pen.size.toFloat()
+            paint.strokeWidth = tool.size.toFloat()
 //            val cornerPathEffect = CornerPathEffect(3.0f)
 //            paint.pathEffect = cornerPathEffect
-            canvas?.drawPath(pen.path, paint)
+            canvas?.drawPath(tool.path, paint)
         }
     }
 
@@ -192,12 +203,15 @@ class DrawCanvas @JvmOverloads constructor(
         val action: Int = event.action
         when (action) {
             MotionEvent.ACTION_DOWN -> {
-                pen = Pen(currentColor, currentSize)
-                drawCommandList.add(pen)
-                pen.path.moveTo(x, y)
+                if(currentTool == Tools.ERASER)
+                    tool = Tool(ContextCompat.getColor(context,R.color.white), currentEraserSize)
+                else
+                    tool = Tool(currentColor, currentSize)
+                drawCommandList.add(tool)
+                tool.path.moveTo(x, y)
             }
             MotionEvent.ACTION_MOVE -> {
-                pen.path.lineTo(x, y)
+                tool.path.lineTo(x, y)
             }
             MotionEvent.ACTION_UP -> {
                 // canvas.drawPath(pen.path, paint)

@@ -24,7 +24,7 @@ import com.example.memoapp.entity.DrawCanvas
 class ThemeDialog(
     context: Context,
     canvas: DrawCanvas,
-    onToolItemSelected: (Int) -> Unit,
+    onToolItemSelected: (DrawCanvas.Tools) -> Unit,
     onColorItemSelected: (DrawCanvas.Colors) -> Unit,
     onSizeItemSelected: (Int) -> Unit
 ) : Dialog(context) {
@@ -37,7 +37,7 @@ class ThemeDialog(
     private lateinit var gradientDrawable: GradientDrawable
 
     private val canvas: DrawCanvas = canvas
-    private val toolCallback: (Int) -> Unit = onToolItemSelected
+    private val toolCallback: (DrawCanvas.Tools) -> Unit = onToolItemSelected
     private val colorCallback: (DrawCanvas.Colors) -> Unit = onColorItemSelected
     private val sizeCallback: (Int) -> Unit = onSizeItemSelected
 
@@ -94,12 +94,6 @@ class ThemeDialog(
             })
         }
 
-//        // Initialize size preview
-//        background = binding.ivSizePreview.background
-//        if (background is GradientDrawable) {
-//            gradientDrawable = background as GradientDrawable
-//        }
-
         sizePreview = AppCompatResources.getDrawable(context, R.drawable.round_black_line)!!
         if( sizePreview is GradientDrawable)
             gradientDrawable = sizePreview as GradientDrawable
@@ -109,9 +103,13 @@ class ThemeDialog(
 
     fun initView() {
 
+        // Initialize tool
+        changeToToolSelectedImage(canvas.currentTool)
+
         // Initialize color
         if(canvas.currentTool == DrawCanvas.Tools.ERASER) {
             changeVisibilityForColor(false)
+            changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
         } else {
             changeVisibilityForColor(true)
             changeToColorSelectedImage(canvas.getColor())
@@ -121,12 +119,14 @@ class ThemeDialog(
         binding.seekbarSize.progress = canvas.getSize()
     }
 
+    // Size preview 의 컬러를 변경
     private fun changeStrokeColorOfSizePreview(color: Int) {
         if (sizePreview is GradientDrawable)
             gradientDrawable.setStroke(5, color)
         binding.ivSizePreview.setImageResource(R.drawable.round_black_line)
     }
 
+    // Size preview 의 크기를 변경
     private fun changeSizeOfPreview(level : Float) {
         var size = MAX_SIZE * (level / 100) * 4
         if(size < 10)
@@ -139,6 +139,7 @@ class ThemeDialog(
        }
     }
 
+    // Color 의 visibility 를 변경
     private fun changeVisibilityForColor(isEnable : Boolean) {
         with(binding) {
             tvColor.visibility = if (isEnable) View.VISIBLE else View.GONE
@@ -146,7 +147,55 @@ class ThemeDialog(
         }
     }
 
+    private fun changeToToolSelectedImage(tool : DrawCanvas.Tools) {
+        toolCallback(tool)
+
+        with(binding) {
+            ivPencil.setBackgroundResource(0)
+            ivBrush.setBackgroundResource(0)
+            ivHighlighter.setBackgroundResource(0)
+            ivSpray.setBackgroundResource(0)
+            ivEraser.setBackgroundResource(0)
+        }
+
+        when (tool) {
+            DrawCanvas.Tools.PEN -> {
+                binding.ivPencil.background =
+                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeVisibilityForColor(true)
+                changeStrokeColorOfSizePreview(canvas.currentColor)
+            }
+            DrawCanvas.Tools.BRUSH -> {
+                binding.ivBrush.background =
+                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeVisibilityForColor(true)
+                changeStrokeColorOfSizePreview(canvas.currentColor)
+            }
+            DrawCanvas.Tools.HIGHLIGHTER -> {
+                binding.ivHighlighter.background =
+                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeVisibilityForColor(true)
+                changeStrokeColorOfSizePreview(canvas.currentColor)
+            }
+            DrawCanvas.Tools.SPRAY -> {
+                binding.ivSpray.background =
+                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeVisibilityForColor(true)
+                changeStrokeColorOfSizePreview(canvas.currentColor)
+            }
+            DrawCanvas.Tools.ERASER -> {
+                binding.ivEraser.background =
+                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeVisibilityForColor(false)
+                changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
+            }
+        }
+    }
+
+    // Color 가 선택되면 선택된 이미지로 변경
     private fun changeToColorSelectedImage(colors: DrawCanvas.Colors) {
+
+        colorCallback(colors)
 
         with(binding) {
             ivRed.setImageResource(R.drawable.round_red_unclicked)
@@ -164,52 +213,42 @@ class ThemeDialog(
         when (colors) {
             DrawCanvas.Colors.RED -> {
                 binding.ivRed.setImageResource(R.drawable.round_red_clicked)
-                colorCallback(DrawCanvas.Colors.RED)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.red))
             }
             DrawCanvas.Colors.ORANGE -> {
                 binding.ivOrange.setImageResource(R.drawable.round_orange_clicked)
-                colorCallback(DrawCanvas.Colors.ORANGE)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.orange))
             }
             DrawCanvas.Colors.YELLOW -> {
                 binding.ivYellow.setImageResource(R.drawable.round_yellow_clicked)
-                colorCallback(DrawCanvas.Colors.YELLOW)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.yellow))
             }
             DrawCanvas.Colors.GREEN -> {
                 binding.ivGreen.setImageResource(R.drawable.round_green_clicked)
-                colorCallback(DrawCanvas.Colors.GREEN)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.green))
             }
             DrawCanvas.Colors.BLUE -> {
                 binding.ivBlue.setImageResource(R.drawable.round_blue_clicked)
-                colorCallback(DrawCanvas.Colors.BLUE)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.blue))
             }
             DrawCanvas.Colors.NAVY -> {
                 binding.ivNavy.setImageResource(R.drawable.round_navy_clicked)
-                colorCallback(DrawCanvas.Colors.NAVY)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.navy))
             }
             DrawCanvas.Colors.PURPLE -> {
                 binding.ivPurple.setImageResource(R.drawable.round_purple_clicked)
-                colorCallback(DrawCanvas.Colors.PURPLE)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.purple))
             }
             DrawCanvas.Colors.GRAY -> {
                 binding.ivGray.setImageResource(R.drawable.round_gray_clicked)
-                colorCallback(DrawCanvas.Colors.GRAY)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.gray))
             }
             DrawCanvas.Colors.BLACK -> {
                 binding.ivBlack.setImageResource(R.drawable.round_black_clicked)
-                colorCallback(DrawCanvas.Colors.BLACK)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
             }
             DrawCanvas.Colors.WHITE -> {
                 binding.ivWhite.setImageResource(R.drawable.round_white_clicked)
-                colorCallback(DrawCanvas.Colors.WHITE)
                 changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.white))
             }
         }
@@ -218,40 +257,26 @@ class ThemeDialog(
     private val onToolClickListener = View.OnClickListener {
         Log.d(TAG, "clicked " + it.id)
 
-        with(binding) {
-            ivPencil.setBackgroundResource(0)
-            ivBrush.setBackgroundResource(0)
-            ivHighlighter.setBackgroundResource(0)
-            ivSpray.setBackgroundResource(0)
-            ivEraser.setBackgroundResource(0)
-        }
-
         when (it.id) {
             R.id.iv_pencil -> {
-                binding.ivPencil.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+               changeToToolSelectedImage(DrawCanvas.Tools.PEN)
             }
             R.id.iv_brush -> {
-                binding.ivBrush.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+               changeToToolSelectedImage(DrawCanvas.Tools.BRUSH)
             }
             R.id.iv_highlighter -> {
-                binding.ivHighlighter.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeToToolSelectedImage(DrawCanvas.Tools.HIGHLIGHTER)
             }
             R.id.iv_spray -> {
-                binding.ivSpray.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeToToolSelectedImage(DrawCanvas.Tools.SPRAY)
             }
             R.id.iv_eraser -> {
-                binding.ivEraser.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_rectangle_white_blue_line)
+                changeToToolSelectedImage(DrawCanvas.Tools.ERASER)
             }
         }
     }
 
     private val onColorClickListener = View.OnClickListener {
-
         when (it.id) {
             R.id.iv_red -> {
                 changeToColorSelectedImage(DrawCanvas.Colors.RED)
@@ -285,5 +310,4 @@ class ThemeDialog(
             }
         }
     }
-
 }

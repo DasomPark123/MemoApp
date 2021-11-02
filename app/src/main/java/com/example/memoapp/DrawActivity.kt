@@ -53,10 +53,9 @@ class DrawActivity : AppCompatActivity() {
                 }
             }
             R.id.iv_color_and_type -> {
-                Log.d(TAG,"iv_color_and_Type_clicked")
                 val dialog = ThemeDialog(this, canvas,
-                    onToolItemSelected = { itemIndex : Int ->
-                        //TODO : 선택된 툴로 변경
+                    onToolItemSelected = { selectedTool : DrawCanvas.Tools ->
+                        canvas.setTool(selectedTool)
                     },
                     onColorItemSelected = { selectedColor : DrawCanvas.Colors ->
                         canvas.setColor(selectedColor)
