@@ -32,9 +32,10 @@ class DrawCanvas @JvmOverloads constructor(
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private lateinit var tool: Tool
     private var drownImage: Bitmap? = null
-    var currentTool: Tools = Tools.PEN
-    var currentColor: Int = Color.BLACK
-    var currentSize: Int = DEF_SIZE_PEN
+    var previousTool : Tools = Tools.ERASER
+    var currentTool : Tools = Tools.PEN
+    var currentColor : Int = Color.BLACK
+    var currentSize : Int = DEF_SIZE_PEN
     var currentEraserSize : Int = DEF_SIZE_ERASER
 
     private var drawCommandListForRedo = ArrayList<Tool>()
@@ -49,20 +50,33 @@ class DrawCanvas @JvmOverloads constructor(
 
     // Tool 타입을 변경
     fun changeTool(tools: Tools) {
+        Log.d(TAG,"changeTool ${tools}")
+        previousTool = currentTool
         when (tools) {
             Tools.PEN -> {
                 currentTool = Tools.PEN
-                currentSize = DEF_SIZE_PEN
+            }
+            Tools.BRUSH -> {
+                currentTool = Tools.BRUSH
+            }
+            Tools.HIGHLIGHTER -> {
+                currentTool = Tools.HIGHLIGHTER
+            }
+            Tools.SPRAY -> {
+                currentTool = Tools.SPRAY
             }
             Tools.ERASER -> {
                 currentTool = Tools.ERASER
-                currentSize = DEF_SIZE_ERASER
             }
         }
+        Log.d(TAG, "previous : $previousTool, currentTool : $currentTool")
     }
 
     fun setTool(tool: Tools) {
+        previousTool = currentTool
         currentTool = tool
+
+        Log.d(TAG, "previous : $previousTool, currentTool : $currentTool")
 
 //        // 지우개를 선택한 경우 배경색과 동일하게 색상 변경해 줌
 //        if(currentTool == Tools.ERASER)
@@ -150,6 +164,9 @@ class DrawCanvas @JvmOverloads constructor(
     }
 
     fun getSize(): Int {
+        if(currentTool == Tools.ERASER)
+            return currentEraserSize
+
         return currentSize
     }
 
@@ -188,8 +205,6 @@ class DrawCanvas @JvmOverloads constructor(
             paint.color = tool.color
             paint.strokeCap = Paint.Cap.ROUND
             paint.strokeWidth = tool.size.toFloat()
-//            val cornerPathEffect = CornerPathEffect(3.0f)
-//            paint.pathEffect = cornerPathEffect
             canvas?.drawPath(tool.path, paint)
         }
     }

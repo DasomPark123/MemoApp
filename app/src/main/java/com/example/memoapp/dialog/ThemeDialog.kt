@@ -109,14 +109,15 @@ class ThemeDialog(
         // Initialize color
         if(canvas.currentTool == DrawCanvas.Tools.ERASER) {
             changeVisibilityForColor(false)
-            changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
         } else {
             changeVisibilityForColor(true)
             changeToColorSelectedImage(canvas.getColor())
         }
 
         // Initialize size seekbar
-        binding.seekbarSize.progress = canvas.getSize()
+        if(canvas.currentTool == DrawCanvas.Tools.ERASER)
+            changeStrokeColorOfSizePreview(ContextCompat.getColor(context, R.color.black))
+        changeSizeOfPreview(canvas.getSize().toFloat())
     }
 
     // Size preview 의 컬러를 변경
@@ -128,6 +129,7 @@ class ThemeDialog(
 
     // Size preview 의 크기를 변경
     private fun changeSizeOfPreview(level : Float) {
+        binding.seekbarSize.progress = canvas.getSize()
         var size = MAX_SIZE * (level / 100) * 4
         if(size < 10)
             size = 10.0f
@@ -148,7 +150,9 @@ class ThemeDialog(
     }
 
     private fun changeToToolSelectedImage(tool : DrawCanvas.Tools) {
+
         toolCallback(tool)
+        changeSizeOfPreview(canvas.getSize().toFloat())
 
         with(binding) {
             ivPencil.setBackgroundResource(0)
