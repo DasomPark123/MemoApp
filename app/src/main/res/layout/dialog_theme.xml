@@ -8,10 +8,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_gray_20"
+            android:layout_gravity="right"
+            android:padding="5dp"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:background="@drawable/bg_rectangle_gray"
             android:padding="5dp"
             android:text="@string/tool"
