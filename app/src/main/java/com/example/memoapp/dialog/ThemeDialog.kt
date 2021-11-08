@@ -61,6 +61,7 @@ class ThemeDialog(
         params.dimAmount = 0.0f
         window!!.attributes = params
         with(binding) {
+            ivCloseDialog.setOnClickListener { dismiss() }
             ivPencil.setOnClickListener(onToolClickListener)
             ivBrush.setOnClickListener(onToolClickListener)
             ivHighlighter.setOnClickListener(onToolClickListener)
@@ -153,6 +154,7 @@ class ThemeDialog(
 
         toolCallback(tool)
         changeSizeOfPreview(canvas.getSize().toFloat())
+        changeToColorSelectedImage(canvas.getColor())
 
         with(binding) {
             ivPencil.setBackgroundResource(0)

@@ -32,11 +32,11 @@ class DrawCanvas @JvmOverloads constructor(
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private lateinit var tool: Tool
     private var drownImage: Bitmap? = null
-    var previousTool : Tools = Tools.ERASER
-    var currentTool : Tools = Tools.PEN
-    var currentColor : Int = Color.BLACK
-    var currentSize : Int = DEF_SIZE_PEN
-    var currentEraserSize : Int = DEF_SIZE_ERASER
+    var previousTool: Tools = Tools.ERASER
+    var currentTool: Tools = Tools.PEN
+    var currentColor: Int = Color.BLACK
+    var currentSize: Int = DEF_SIZE_PEN
+    var currentEraserSize: Int = DEF_SIZE_ERASER
 
     private var drawCommandListForRedo = ArrayList<Tool>()
 
@@ -50,7 +50,7 @@ class DrawCanvas @JvmOverloads constructor(
 
     // Tool 타입을 변경
     fun changeTool(tools: Tools) {
-        Log.d(TAG,"changeTool ${tools}")
+        Log.d(TAG, "changeTool ${tools}")
         previousTool = currentTool
         when (tools) {
             Tools.PEN -> {
@@ -87,68 +87,108 @@ class DrawCanvas @JvmOverloads constructor(
     fun setColor(color: Colors) {
         when (color) {
             Colors.RED -> {
-                currentColor = ContextCompat.getColor(context, R.color.red)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.red)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_red)
             }
             Colors.ORANGE -> {
-                currentColor = ContextCompat.getColor(context, R.color.orange)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.orange)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_orange)
             }
             Colors.YELLOW -> {
-                currentColor = ContextCompat.getColor(context, R.color.yellow)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.yellow)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_yellow)
             }
             Colors.GREEN -> {
-                currentColor = ContextCompat.getColor(context, R.color.green)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.green)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_green)
             }
             Colors.BLUE -> {
-                currentColor = ContextCompat.getColor(context, R.color.blue)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                 ContextCompat.getColor(context, R.color.blue)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_blue)
             }
             Colors.NAVY -> {
-                currentColor = ContextCompat.getColor(context, R.color.navy)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.navy)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_navy)
             }
             Colors.PURPLE -> {
-                currentColor = ContextCompat.getColor(context, R.color.purple)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.purple)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_navy)
             }
             Colors.GRAY -> {
-                currentColor = ContextCompat.getColor(context, R.color.gray)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.gray)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_gray)
             }
             Colors.BLACK -> {
-                currentColor = ContextCompat.getColor(context, R.color.black)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.black)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_black)
             }
             Colors.WHITE -> {
-                currentColor = ContextCompat.getColor(context, R.color.white)
+                currentColor = if (currentTool != Tools.HIGHLIGHTER)
+                    ContextCompat.getColor(context, R.color.white)
+                else
+                    ContextCompat.getColor(context, R.color.translucent_white)
             }
         }
     }
 
     fun getColor(): Colors {
         when (currentColor) {
-            ContextCompat.getColor(context, R.color.red) -> {
+            ContextCompat.getColor(context, R.color.red),
+            ContextCompat.getColor(context, R.color.translucent_red)  -> {
                 return Colors.RED
             }
-            ContextCompat.getColor(context, R.color.orange) -> {
+            ContextCompat.getColor(context, R.color.orange),
+            ContextCompat.getColor(context, R.color.translucent_orange) -> {
                 return Colors.ORANGE
             }
-            ContextCompat.getColor(context, R.color.yellow) -> {
+            ContextCompat.getColor(context, R.color.yellow),
+            ContextCompat.getColor(context, R.color.translucent_yellow)-> {
                 return Colors.YELLOW
             }
-            ContextCompat.getColor(context, R.color.green) -> {
+            ContextCompat.getColor(context, R.color.green),
+            ContextCompat.getColor(context, R.color.translucent_green)-> {
                 return Colors.GREEN
             }
-            ContextCompat.getColor(context, R.color.blue) -> {
+            ContextCompat.getColor(context, R.color.blue),
+            ContextCompat.getColor(context, R.color.translucent_blue)-> {
                 return Colors.BLUE
             }
-            ContextCompat.getColor(context, R.color.navy) -> {
+            ContextCompat.getColor(context, R.color.navy),
+            ContextCompat.getColor(context, R.color.translucent_navy)-> {
                 return Colors.NAVY
             }
-            ContextCompat.getColor(context, R.color.purple) -> {
+            ContextCompat.getColor(context, R.color.purple),
+            ContextCompat.getColor(context, R.color.translucent_purple)-> {
                 return Colors.PURPLE
             }
-            ContextCompat.getColor(context, R.color.gray) -> {
+            ContextCompat.getColor(context, R.color.gray),
+            ContextCompat.getColor(context, R.color.translucent_gray)-> {
                 return Colors.GRAY
             }
-            ContextCompat.getColor(context, R.color.black) -> {
+            ContextCompat.getColor(context, R.color.black),
+            ContextCompat.getColor(context, R.color.translucent_black)-> {
                 return Colors.BLACK
             }
-            ContextCompat.getColor(context, R.color.white) -> {
+            ContextCompat.getColor(context, R.color.white),
+            ContextCompat.getColor(context, R.color.translucent_white)-> {
                 return Colors.WHITE
             }
         }
@@ -157,14 +197,14 @@ class DrawCanvas @JvmOverloads constructor(
 
     // Size를 변경
     fun setSize(size: Int) {
-        if(currentTool == Tools.ERASER)
+        if (currentTool == Tools.ERASER)
             currentEraserSize = size
         else
             currentSize = size
     }
 
     fun getSize(): Int {
-        if(currentTool == Tools.ERASER)
+        if (currentTool == Tools.ERASER)
             return currentEraserSize
 
         return currentSize
@@ -196,15 +236,46 @@ class DrawCanvas @JvmOverloads constructor(
         invalidate()
     }
 
+    private fun setAttribute(tool: Tool) {
+        when (currentTool) {
+            Tools.PEN -> {
+                paint.style = Paint.Style.STROKE
+                paint.color = tool.color
+                paint.strokeCap = Paint.Cap.ROUND
+                paint.strokeWidth = tool.size.toFloat()
+            }
+            Tools.BRUSH -> {
+
+            }
+            Tools.HIGHLIGHTER -> {
+                paint.style = Paint.Style.STROKE
+                paint.color = tool.color
+                paint.strokeCap = Paint.Cap.ROUND
+                paint.strokeWidth = tool.size.toFloat()
+            }
+            Tools.SPRAY -> {
+                paint.style = Paint.Style.STROKE
+                paint.color = tool.color
+                paint.strokeCap = Paint.Cap.ROUND
+                paint.strokeWidth = tool.size.toFloat()
+                val blur = BlurMaskFilter( 10f, BlurMaskFilter.Blur.NORMAL)
+                paint.setMaskFilter(blur)
+            }
+            Tools.ERASER -> {
+                paint.style = Paint.Style.STROKE
+                paint.color = tool.color
+                paint.strokeCap = Paint.Cap.ROUND
+                paint.strokeWidth = tool.size.toFloat()
+            }
+        }
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         Log.d(TAG, "onDraw()")
         for (i in 0 until drawCommandList.size) {
             val tool: Tool = drawCommandList[i]
-            paint.style = Paint.Style.STROKE
-            paint.color = tool.color
-            paint.strokeCap = Paint.Cap.ROUND
-            paint.strokeWidth = tool.size.toFloat()
+            setAttribute(tool)
             canvas?.drawPath(tool.path, paint)
         }
     }
@@ -218,8 +289,8 @@ class DrawCanvas @JvmOverloads constructor(
         val action: Int = event.action
         when (action) {
             MotionEvent.ACTION_DOWN -> {
-                if(currentTool == Tools.ERASER)
-                    tool = Tool(ContextCompat.getColor(context,R.color.white), currentEraserSize)
+                if (currentTool == Tools.ERASER)
+                    tool = Tool(ContextCompat.getColor(context, R.color.white), currentEraserSize)
                 else
                     tool = Tool(currentColor, currentSize)
                 drawCommandList.add(tool)
